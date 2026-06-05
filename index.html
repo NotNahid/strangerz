@@ -105,6 +105,72 @@
     .btn-start:hover { background: #333; transform: translateY(-1px); }
     .btn-start:active { transform: scale(0.98); }
 
+    .btn-secondary {
+      width: 100%; padding: 14px;
+      background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.8); border-radius: 100px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-dim);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.8); color: var(--text); }
+
+    /* ══ MODAL ══ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-card {
+      background: rgba(255,255,255,0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      width: 100%; max-width: 400px; border-radius: 32px; padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      transform: translateY(20px); transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+    .modal-header h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+    .modal-header p { font-size: 14px; color: var(--text-dim); margin-top: 6px; line-height: 1.4; }
+    
+    .interest-section { margin-top: 24px; }
+    .interest-section h3 { font-size: 13px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    
+    .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .interest-tag {
+      padding: 6px 12px; padding-right: 8px;
+      background: #eee; border-radius: 100px; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .remove-tag {
+      width: 18px; height: 18px; border-radius: 50%; background: #ddd;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; cursor: pointer; transition: background 0.2s;
+    }
+    .remove-tag:hover { background: #ccc; }
+    
+    #tag-input {
+      width: 100%; padding: 12px 18px;
+      background: rgba(0,0,0,0.05); border: 1.5px solid transparent; border-radius: 16px;
+      font-family: inherit; font-size: 14px; outline: none; transition: all 0.2s;
+    }
+    #tag-input:focus { background: white; border-color: #ddd; }
+    
+    .wait-selector { display: flex; background: rgba(0,0,0,0.05); border-radius: 14px; padding: 4px; gap: 4px; margin-top: 12px; }
+    .wait-btn {
+      flex: 1; padding: 10px; border: none; background: transparent;
+      border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 600;
+      color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+    }
+    .wait-btn.active { background: white; color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    .modal-footer { margin-top: 32px; }
+    .btn-done {
+      width: 100%; padding: 16px; background: #111; color: white; border: none;
+      border-radius: 100px; font-family: inherit; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-done:hover { background: #333; }
+
     /* ══ FINDING ══ */
     #screen-finding { align-items: center; justify-content: center; gap: 36px; }
     .radar-container { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
@@ -132,27 +198,15 @@
     }
     .btn-cancel-pill:hover { color: #e53935; background: rgba(255,255,255,0.75); }
 
-    /* ══════════════════════════════════════
-       CHAT — industry-standard layout:
-       topbar: fixed top
-       messages: fills remaining space, scrollable
-       input: fixed bottom, moves up WITH keyboard via visualViewport
-    ══════════════════════════════════════ */
+    /* ══ CHAT ══ */
     #screen-chat { background: transparent; }
 
-    /* TOPBAR — fixed to top, always visible */
     .chat-topbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 20;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
-      padding-top: max(10px, env(safe-area-inset-top, 10px));
-      background: rgba(253,240,232,0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.4);
-      min-height: var(--topbar-h);
+      padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top, 10px));
+      background: rgba(253,240,232,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.4); min-height: var(--topbar-h);
     }
     .topbar-left { display: flex; align-items: center; gap: 10px; }
     .stranger-avatar {
@@ -168,568 +222,366 @@
       width: 36px; height: 36px; border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.8);
       background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      cursor: pointer; font-size: 15px;
-      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
       transition: all 0.15s; box-shadow: var(--shadow-sm); color: var(--text);
     }
-    .topbar-btn:hover { background: rgba(255,255,255,0.85); transform: scale(1.05); }
 
-    /* MESSAGES — scrollable area between topbar and input */
     #messages {
-      position: fixed;
-      top: var(--topbar-h);
-      left: 0; right: 0;
-      /* bottom is set dynamically by JS to sit above the input bar */
-      bottom: var(--input-h);
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 12px 16px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+      position: fixed; top: var(--topbar-h); left: 0; right: 0; bottom: var(--input-h);
+      overflow-y: auto; overflow-x: hidden; padding: 12px 16px 8px;
+      display: flex; flex-direction: column; gap: 6px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
     }
     #messages::-webkit-scrollbar { width: 0; }
 
-    .msg {
-      display: flex; flex-direction: column;
-      max-width: 78%;
-      animation: msgPop 0.2s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    @keyframes msgPop {
-      from { opacity: 0; transform: scale(0.88) translateY(6px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .msg.you      { align-self: flex-end; align-items: flex-end; }
+    .msg { display: flex; flex-direction: column; max-width: 78%; animation: msgPop 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes msgPop { from { opacity: 0; transform: scale(0.88) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .msg.you { align-self: flex-end; align-items: flex-end; }
     .msg.stranger { align-self: flex-start; align-items: flex-start; }
-    .msg.system   { align-self: center; max-width: 90%; }
-    .msg.you + .msg.you,
-    .msg.stranger + .msg.stranger { margin-top: -3px; }
+    .msg.system { align-self: center; max-width: 90%; }
+    .msg.you + .msg.you, .msg.stranger + .msg.stranger { margin-top: -3px; }
 
-    .bubble {
-      padding: 11px 16px; border-radius: 22px;
-      font-size: 15px; line-height: 1.45; word-break: break-word;
-    }
+    .bubble { padding: 11px 16px; border-radius: 22px; font-size: 15px; line-height: 1.45; word-break: break-word; position: relative; }
     .msg.you .bubble {
-      background: rgba(255,255,255,0.72);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      color: var(--text); border-bottom-right-radius: 6px;
-      box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      color: var(--text); border-bottom-right-radius: 6px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.85);
     }
     .msg.stranger .bubble {
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      color: var(--text); border-bottom-left-radius: 6px;
-      box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      color: var(--text); border-bottom-left-radius: 6px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.95);
     }
-    .msg.you + .msg.you .bubble { border-bottom-right-radius: 22px; border-top-right-radius: 6px; }
-    .msg.stranger + .msg.stranger .bubble { border-bottom-left-radius: 22px; border-top-left-radius: 6px; }
-    .msg.system .bubble {
-      background: rgba(255,255,255,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      color: var(--text-dim); font-size: 12px; text-align: center;
-      border-radius: 100px; padding: 6px 14px; font-weight: 500;
-    }
+    .msg.system .bubble { background: rgba(255,255,255,0.5); color: var(--text-dim); font-size: 12px; text-align: center; border-radius: 100px; padding: 6px 14px; font-weight: 500; }
     .msg-time { font-size: 10px; color: rgba(0,0,0,0.35); margin-top: 3px; padding: 0 6px; }
 
-    /* Typing indicator */
-    .typing-bubble {
-      align-self: flex-start;
-      background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.95);
-      border-radius: 22px; border-bottom-left-radius: 6px;
-      padding: 13px 18px; box-shadow: var(--shadow);
-      display: none; gap: 5px; align-items: center;
-    }
+    .typing-bubble { align-self: flex-start; background: rgba(255,255,255,0.88); border-radius: 22px; border-bottom-left-radius: 6px; padding: 13px 18px; box-shadow: var(--shadow); display: none; gap: 5px; align-items: center; }
     .typing-bubble.visible { display: flex; }
-    .typing-bubble span {
-      width: 6px; height: 6px; border-radius: 50%; background: #bbb;
-      animation: tDot 1.2s ease infinite;
-    }
-    .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes tDot {
-      0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-5px); opacity: 1; }
-    }
+    .typing-bubble span { width: 6px; height: 6px; border-radius: 50%; background: #bbb; animation: tDot 1.2s ease infinite; }
+    @keyframes tDot { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-5px); opacity: 1; } }
 
-    /* INPUT BAR — fixed bottom, JS moves it up with keyboard */
-    .input-area {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 20;
-      padding: 8px 12px;
-      padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
-      background: rgba(253,240,232,0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255,255,255,0.4);
-    }
-
-    /* Emoji picker sits above input bar */
+    .input-area { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; padding: 8px 12px; padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)); background: rgba(253,240,232,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.4); }
     .input-wrapper { position: relative; }
-    .emoji-picker {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 0; right: 0;
-      background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.95); border-radius: 20px;
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.10); padding: 12px; z-index: 100; display: none;
-    }
-    .emoji-picker.open { display: block; animation: emojiUp 0.2s ease; }
-    @keyframes emojiUp {
-      from { opacity: 0; transform: translateY(8px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .emoji-cats { display: flex; gap: 4px; margin-bottom: 10px; }
-    .ecat { flex: 1; padding: 7px; border: none; background: transparent; border-radius: 10px; font-size: 17px; cursor: pointer; transition: background 0.12s; }
-    .ecat.active { background: rgba(0,0,0,0.08); }
-    .ecat:hover  { background: rgba(0,0,0,0.05); }
-    .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; max-height: 150px; overflow-y: auto; }
-    .emoji-grid::-webkit-scrollbar { width: 0; }
-    .eg-btn { padding: 5px; border: none; background: transparent; font-size: 22px; cursor: pointer; border-radius: 8px; transition: background 0.1s; text-align: center; line-height: 1; }
-    .eg-btn:hover { background: rgba(0,0,0,0.06); }
 
     .input-row { display: flex; align-items: flex-end; gap: 8px; }
-    .input-pill {
-      flex: 1; display: flex; align-items: flex-end;
-      background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid rgba(255,255,255,0.95); border-radius: 26px;
-      padding: 8px 8px 8px 16px; gap: 4px;
-      box-shadow: var(--shadow); transition: border-color 0.2s;
-    }
-    .input-pill:focus-within { border-color: rgba(255,255,255,1); background: rgba(255,255,255,0.9); }
-    #msg-input {
-      flex: 1; border: none; background: transparent;
-      font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text);
-      resize: none; outline: none; line-height: 1.4;
-      max-height: 110px; min-height: 22px; padding: 3px 0;
-    }
-    #msg-input::placeholder { color: #aaa; }
-    #msg-input:disabled { opacity: 0.4; }
-    .btn-emoji-pill {
-      width: 32px; height: 32px; border: none; background: transparent;
-      font-size: 20px; cursor: pointer; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.15s; flex-shrink: 0; line-height: 1;
-    }
-    .btn-emoji-pill:hover { transform: scale(1.15); }
-    .btn-send-circle {
-      width: 44px; height: 44px; border-radius: 50%; border: none;
-      background: #111; color: white; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all 0.15s; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-    }
-    .btn-send-circle svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
-    .btn-send-circle:hover { background: #333; transform: scale(1.06); }
-    .btn-send-circle:active { transform: scale(0.94); }
-    .btn-send-circle:disabled { background: rgba(0,0,0,0.2); box-shadow: none; cursor: not-allowed; transform: none; }
+    .input-pill { flex: 1; display: flex; align-items: flex-end; background: rgba(255,255,255,0.75); border-radius: 26px; padding: 8px 16px; gap: 4px; box-shadow: var(--shadow); }
+    #msg-input { flex: 1; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); resize: none; outline: none; line-height: 1.4; max-height: 110px; min-height: 22px; padding: 3px 0; }
+    .btn-send-circle { width: 44px; height: 44px; border-radius: 50%; border: none; background: #111; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .btn-mic { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.8); cursor: pointer; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(255,255,255,0.95); }
+    .btn-mic.recording { background: #ff3b30; animation: micPulse 1.5s infinite; }
+    @keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
 
-    /* TOAST */
-    #toast {
-      position: fixed; bottom: 90px; left: 50%;
-      transform: translateX(-50%) translateY(8px);
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      color: white; padding: 10px 20px; border-radius: 100px;
-      font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.25s;
-      z-index: 9999; pointer-events: none; white-space: nowrap;
-    }
+    .action-menu-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.15); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; }
+    .action-menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .action-menu { width: 240px; background: rgba(255,255,255,0.9); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.8); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    .action-menu-overlay.open .action-menu { transform: scale(1); }
+    .reaction-bar { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .react-btn { font-size: 22px; cursor: pointer; background: none; border: none; }
+    .action-item { width: 100%; padding: 14px 20px; border: none; background: transparent; text-align: left; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 12px; }
+
+    .voice-bubble { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+    .play-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--text); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .waveform-visual { flex: 1; height: 20px; display: flex; align-items: center; gap: 2px; }
+    .wave-bar { width: 3px; background: rgba(0,0,0,0.2); border-radius: 10px; transition: height 0.1s; }
+
+    .recording-ui { position: absolute; inset: 0; background: #fff; z-index: 50; display: none; align-items: center; padding: 0 12px; gap: 12px; border-radius: 30px; }
+    .recording-ui.visible { display: flex; }
+    .rec-dot { width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; animation: recPulse 1s infinite; }
+    @keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .rec-timer { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14px; min-width: 40px; }
+    .rec-waves { flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px; height: 30px; }
+    .rec-wave-bar { width: 3px; height: 10px; background: #ff3b30; border-radius: 10px; transition: height 0.05s; }
+    .btn-rec-cancel { background: none; border: none; font-weight: 600; color: #ff3b30; cursor: pointer; padding: 10px; }
+    .btn-rec-send { width: 40px; height: 40px; border-radius: 50%; background: #ff3b30; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    .reply-preview { display: none; align-items: center; justify-content: space-between; padding: 8px 16px; background: rgba(0,0,0,0.05); border-left: 4px solid var(--text); margin-bottom: 8px; border-radius: 8px; font-size: 13px; }
+    .reply-preview.visible { display: flex; }
+    .reaction-container { display: flex; gap: 4px; margin-top: -8px; margin-left: 10px; z-index: 5; flex-wrap: wrap; }
+    .reaction-pill { background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 100px; padding: 2px 6px; font-size: 12px; box-shadow: var(--shadow-sm); }
+    .msg-edited-tag { font-size: 10px; color: var(--text-dim); margin-left: 4px; font-style: italic; }
+
+    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(8px); background: rgba(0,0,0,0.75); color: white; padding: 10px 20px; border-radius: 100px; font-size: 13px; opacity: 0; transition: all 0.25s; z-index: 9999; pointer-events: none; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* CONNECTED FLASH */
-    .conn-flash {
-      position: fixed; inset: 0; z-index: 500;
-      display: flex; align-items: center; justify-content: center;
-      animation: flashOut 0.8s ease forwards; pointer-events: none;
-      background:
-        radial-gradient(ellipse 80% 60% at 10% 10%, #f7c6d0 0%, transparent 60%),
-        radial-gradient(ellipse 70% 70% at 90% 0%,  #ffd6a0 0%, transparent 55%),
-        radial-gradient(ellipse 60% 80% at 80% 90%, #c9b8f0 0%, transparent 60%),
-        radial-gradient(ellipse 80% 60% at 0% 80%,  #a8d8f0 0%, transparent 55%),
-        #fdf0e8;
-    }
+    .conn-flash { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; animation: flashOut 0.8s ease forwards; pointer-events: none; }
     @keyframes flashOut { 0%,60% { opacity: 1; } 100% { opacity: 0; } }
-    .conn-flash-inner {
-      background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-radius: 24px; padding: 28px 40px; text-align: center;
-      animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    }
-    @keyframes popIn { from { opacity:0; transform: scale(0.7); } to { opacity:1; transform: scale(1); } }
-    .conn-flash-inner p { font-size: 13px; color: #666; margin-top: 4px; }
-
-    @media (max-width: 480px) {
-      .emoji-grid { grid-template-columns: repeat(7, 1fr); }
-      .msg { max-width: 85%; }
-    }
+    .conn-flash-inner { background: rgba(255,255,255,0.7); border-radius: 24px; padding: 28px 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
 
 <div class="grad-bg"></div>
 
-<!-- LANDING -->
 <div id="screen-landing" class="screen">
   <div class="landing-content">
     <div class="landing-top">
       <div class="app-name">strangerz</div>
       <div class="app-sub">Talk anonymously with someone new</div>
     </div>
-    <div class="online-chip">
-      <div class="live-dot"></div>
-      <span id="online-count">—</span>&nbsp;online now
-    </div>
+    <div class="online-chip"><div class="live-dot"></div><span id="online-count">—</span>&nbsp;online now</div>
     <div class="rules-pills">
       <div class="rule-pill">🤝 Be kind</div>
       <div class="rule-pill">🔒 No logs</div>
       <div class="rule-pill">👤 Anonymous</div>
       <div class="rule-pill">⏭️ Skip freely</div>
     </div>
+    <button class="btn-secondary" onclick="openInterestsModal()">Manage Interests</button>
     <button class="btn-start" onclick="startChat()">Find a Stranger</button>
   </div>
 </div>
 
-<!-- FINDING -->
+<div id="modal-interests" class="modal-overlay" onclick="closeInterestsModal(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>Manage Interests</h2><p>Add and remove interests to help us find better matches for you.</p></div>
+    <div class="interest-section"><h3>Match with interests</h3><div id="interests-tags" class="tags-container"></div><input type="text" id="tag-input" placeholder="Add an interest..." maxlength="20"></div>
+    <div class="interest-section"><h3>Max Wait Duration</h3><div class="wait-selector">
+      <button class="wait-btn" onclick="setWait(5)" data-wait="5">5 sec</button>
+      <button class="wait-btn" onclick="setWait(10)" data-wait="10">10 sec</button>
+      <button class="wait-btn active" onclick="setWait(30)" data-wait="30">30 sec</button>
+      <button class="wait-btn" onclick="setWait(-1)" data-wait="-1">Forever</button>
+    </div></div>
+    <div class="modal-footer"><button class="btn-done" onclick="closeInterestsModal()">Done</button></div>
+  </div>
+</div>
+
 <div id="screen-finding" class="screen hidden">
-  <div class="radar-container">
-    <div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div>
-    <div class="radar-core">🔍</div>
-  </div>
-  <div class="finding-label">
-    <h2>Finding someone…</h2>
-    <p>Searching the world for a stranger</p>
-    <div id="queue-pos"></div>
-  </div>
+  <div class="radar-container"><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-core">🔍</div></div>
+  <div class="finding-label"><h2>Finding someone…</h2><p>Searching the world for a stranger</p><div id="queue-pos"></div></div>
   <button class="btn-cancel-pill" onclick="cancelSearch()">Cancel</button>
 </div>
 
-<!-- CHAT -->
 <div id="screen-chat" class="screen hidden">
-
-  <!-- Fixed topbar -->
   <div class="chat-topbar">
-    <div class="topbar-left">
-      <div class="stranger-avatar">🎭</div>
-      <div class="stranger-info">
-        <div class="stranger-name">Stranger</div>
-        <div class="stranger-status" id="stranger-status">connected</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <button class="topbar-btn" onclick="skipStranger()" title="Skip">⏭️</button>
-      <button class="topbar-btn" onclick="endChat()" title="End">✕</button>
-    </div>
+    <div class="topbar-left"><div class="stranger-avatar">🎭</div><div class="stranger-info"><div class="stranger-name">Stranger</div><div class="stranger-status" id="stranger-status">connected</div></div></div>
+    <div class="topbar-right"><button class="topbar-btn" onclick="skipStranger()" title="Skip">⏭️</button><button class="topbar-btn" onclick="endChat()" title="End">✕</button></div>
   </div>
-
-  <!-- Scrollable messages -->
-  <div id="messages">
-    <div class="typing-bubble" id="typing-bubble">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-
-  <!-- Fixed input bar -->
+  <div id="messages"><div class="typing-bubble" id="typing-bubble"><span></span><span></span><span></span></div></div>
   <div class="input-area" id="input-area">
     <div class="input-wrapper">
-      <div class="emoji-picker" id="emoji-picker">
-        <div class="emoji-cats">
-          <button class="ecat active" onclick="showCat('smileys')">😀</button>
-          <button class="ecat" onclick="showCat('gestures')">👋</button>
-          <button class="ecat" onclick="showCat('hearts')">❤️</button>
-          <button class="ecat" onclick="showCat('nature')">🌿</button>
-          <button class="ecat" onclick="showCat('objects')">🎮</button>
-        </div>
-        <div class="emoji-grid" id="emoji-grid"></div>
-      </div>
+      <div id="reply-preview" class="reply-preview"><div class="reply-content" id="reply-content">Replying to...</div><div class="cancel-reply" onclick="cancelReply()">✕</div></div>
+      <div id="recording-ui" class="recording-ui"><div class="rec-dot"></div><div class="rec-timer" id="rec-timer">0:20</div><div class="rec-waves" id="rec-waves"></div><button class="btn-rec-cancel" onclick="cancelVoiceRecord()">Cancel</button><button class="btn-rec-send" onclick="sendVoiceRecord()"><svg viewBox="0 0 24 24" width="18" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>
       <div class="input-row">
-        <div class="input-pill">
-          <textarea id="msg-input" placeholder="Message…" rows="1" maxlength="500"></textarea>
-          <button class="btn-emoji-pill" id="emoji-toggle-btn" onclick="toggleEmoji()">😊</button>
-        </div>
-        <button class="btn-send-circle" id="send-btn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
+        <button class="btn-mic" id="mic-btn" onclick="toggleVoiceRecord()"><svg viewBox="0 0 24 24" width="20" fill="gray"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button>
+        <div class="input-pill"><textarea id="msg-input" placeholder="Message…" rows="1" maxlength="500"></textarea></div>
+        <button class="btn-send-circle" id="send-btn" onclick="sendMessage()"><svg viewBox="0 0 24 24" width="18" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
       </div>
     </div>
   </div>
+</div>
 
+<div id="action-menu-overlay" class="action-menu-overlay" onclick="closeActionMenu()">
+  <div class="action-menu" onclick="event.stopPropagation()">
+    <div class="reaction-bar">
+      <button class="react-btn" onclick="reactToMessage('❤️')">❤️</button><button class="react-btn" onclick="reactToMessage('😂')">😂</button><button class="react-btn" onclick="reactToMessage('😮')">😮</button><button class="react-btn" onclick="reactToMessage('😢')">😢</button><button class="react-btn" onclick="reactToMessage('🔥')">🔥</button><button class="react-btn" onclick="reactToMessage('👍')">👍</button>
+    </div>
+    <button class="action-item" onclick="replyToMessage()"><span>💬</span> Reply</button>
+    <button class="action-item" onclick="copyMessage()"><span>📋</span> Copy</button>
+    <button class="action-item" id="edit-action-btn" onclick="editMessage()"><span>✏️</span> Edit</button>
+  </div>
 </div>
 
 <div id="toast"></div>
+<audio id="snd-msg-in" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
+<audio id="snd-match" src="https://assets.mixkit.co/active_storage/sfx/2030/2030-preview.mp3" preload="auto"></audio>
 
 <script>
-const EMOJIS = {
-  smileys:  ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','🤐','😐','😑','😶','😏','😒','🙄','😬','🤥','😌','😔','😪','😴','😷','🤒','🤕','🤢','🤧','🥵','🥶','😵','🤯','🥳','😎','🤓','🧐','😕','😟','🙁','☹️','😮','😲','😳','🥺','😦','😧','😨','😰','😢','😭','😱','😤','😡','😠','🤬','😈','👿','💀','☠️','🤡','👹','👺','👻','👽','👾','🤖'],
-  gestures: ['👋','🤚','🖐','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','👐','🤲','🤝','🙏','💪','🦾','💅','🤳'],
-  hearts:   ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','💌','💋','👄','💏','💑','🌹','🥀'],
-  nature:   ['🌿','🍀','🌱','🌲','🌳','🌴','🌵','🎋','🍃','🍂','🍁','🍄','🌾','💐','🌷','🌹','🌺','🌸','🌼','🌻','🌞','🌙','⭐','🌟','🌈','❄️','🔥','💧','🌊','🐶','🐱','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐸','🐵','🦋','🐝','🌸'],
-  objects:  ['🎮','🕹','🎲','🎯','🎳','🎸','🎹','🥁','🎧','📱','💻','📷','📸','🎥','⌚','📡','💡','🔦','🎁','🎀','🎊','🎉','🎈','🏆','🥇','🎭','🎨','🖼','🎬','🎤','🎵','🎶','🎼','📚','📖','✏️','🖊','📝','💼','🔑','🗝','🔒','🔓','💰','💳','🛒','✈️','🚀','🌍']
-};
+const SERVER_URL = (function() {
+  const host = window.location.hostname;
+  // If we are local or in Cloud Shell, connect to the current origin
+  if (host === 'localhost' || host === '127.0.0.1' || host.includes('cloudshell.dev')) {
+    return window.location.origin;
+  }
+  // REPLACE THIS with your actual Railway URL after you deploy the backend
+  return 'https://strangerz-backend-production.up.railway.app';
+})();
+let socket = null, isTyping = false, typingTimer = null;
+let messagesData = new Map(), selectedMessageId = null, replyingToId = null, editingMessageId = null;
+let isRecording = false, mediaRecorder = null, audioChunks = [], longPressTimer = null, recCountdownInterval = null, recTimeLeft = 20;
+let audioContext = null, analyser = null, dataArray = null, source = null, animationFrameId = null;
 
-const SERVER_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000'
-  : 'https://strangerz-backend-production.up.railway.app';
+const style = document.createElement('style');
+style.innerHTML = `@keyframes highlight { 0% { background: rgba(255,255,0,0.3); } 100% { background: transparent; } } .bubble-reply-context { background: rgba(0,0,0,0.05); border-left: 3px solid rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 8px; margin-bottom: -10px; padding-bottom: 14px; z-index: -1; transform: translateY(4px); cursor: pointer; opacity: 0.8; } .msg.you .bubble-reply-context { border-left: 0; border-right: 3px solid rgba(0,0,0,0.3); } .reaction-pill.own { border-color: var(--text); background: #f0f0f0; }`;
+document.head.appendChild(style);
 
-let socket = null;
-let isTyping = false;
-let typingTimer = null;
-let emojiOpen = false;
-let currentCat = 'smileys';
+function playSound(id) { const el = document.getElementById(id); if (el) { el.currentTime = 0; el.play().catch(e => console.warn('Sound blocked', e)); } }
 
-// ── KEYBOARD / LAYOUT ────────────────────────────────────
-// The single source of truth for the keyboard-aware layout.
-// visualViewport tells us exactly how tall the visible area is
-// and how far from the top it starts (it shifts up on iOS when
-// the keyboard opens). We move the input bar and resize the
-// message list in real time — exactly like WhatsApp/iMessage.
+let userSettings = { interests: [], maxWait: 30 };
+const saved = localStorage.getItem('strangerz_settings');
+if (saved) { try { userSettings = JSON.parse(saved); } catch(e) {} }
+
+function openInterestsModal() { renderTags(); updateWaitUI(); document.getElementById('modal-interests').classList.add('open'); }
+function closeInterestsModal(e) { if (e && e.target !== document.getElementById('modal-interests')) return; document.getElementById('modal-interests').classList.remove('open'); localStorage.setItem('strangerz_settings', JSON.stringify(userSettings)); }
+function renderTags() { const container = document.getElementById('interests-tags'); container.innerHTML = userSettings.interests.map((tag, i) => `<div class="interest-tag">${escapeHtml(tag)}<div class="remove-tag" onclick="removeTag(${i})">✕</div></div>`).join(''); }
+function removeTag(index) { userSettings.interests.splice(index, 1); renderTags(); }
+document.getElementById('tag-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') { const val = e.target.value.trim().toLowerCase(); if (val && !userSettings.interests.includes(val)) { userSettings.interests.push(val); e.target.value = ''; renderTags(); } } });
+function setWait(sec) { userSettings.maxWait = sec; updateWaitUI(); }
+function updateWaitUI() { document.querySelectorAll('.wait-btn').forEach(btn => { btn.classList.toggle('active', parseInt(btn.dataset.wait) === userSettings.maxWait); }); }
 
 function updateLayout() {
   const chatHidden = document.getElementById('screen-chat').classList.contains('hidden');
   if (chatHidden) return;
-
   const vv = window.visualViewport;
-  const inputArea = document.getElementById('input-area');
-  const messages  = document.getElementById('messages');
-
+  const inputArea = document.getElementById('input-area'), messages = document.getElementById('messages');
   if (vv) {
-    // Distance from bottom of visual viewport to bottom of layout viewport
     const offsetFromBottom = window.innerHeight - (vv.offsetTop + vv.height);
-    // Position input bar just above the keyboard
     inputArea.style.bottom = offsetFromBottom + 'px';
-    // Measure actual rendered height of input bar
-    const inputH = inputArea.getBoundingClientRect().height;
-    // Topbar height
-    const topbarH = document.querySelector('.chat-topbar').getBoundingClientRect().height;
-    // Messages fills the gap
-    messages.style.top    = topbarH + 'px';
-    messages.style.bottom = (offsetFromBottom + inputH) + 'px';
-  } else {
-    // Fallback: reset to CSS defaults
-    inputArea.style.bottom = '';
-    messages.style.bottom  = 'var(--input-h)';
-    messages.style.top     = 'var(--topbar-h)';
+    const inputH = inputArea.getBoundingClientRect().height, topbarH = document.querySelector('.chat-topbar').getBoundingClientRect().height;
+    messages.style.top = topbarH + 'px'; messages.style.bottom = (offsetFromBottom + inputH) + 'px';
   }
-
   scrollToBottom();
 }
-
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', updateLayout);
-  window.visualViewport.addEventListener('scroll', updateLayout);
-}
+if (window.visualViewport) { window.visualViewport.addEventListener('resize', updateLayout); window.visualViewport.addEventListener('scroll', updateLayout); }
 window.addEventListener('resize', updateLayout);
 
-// ── SOCKET ────────────────────────────────────────────────
 function initSocket() {
+  if (socket) return;
   socket = io(SERVER_URL, { transports: ['websocket', 'polling'] });
-  socket.on('connect', () => console.log('✓ connected'));
-  socket.on('disconnect', () => showToast('Disconnected'));
   socket.on('online_count', n => { document.getElementById('online-count').textContent = n; });
-  socket.on('queue_position', pos => {
-    document.getElementById('queue-pos').textContent = pos > 1 ? `You're #${pos} in queue` : 'Almost there…';
-  });
-  socket.on('chat_start', () => {
-    showConnectedFlash();
+  socket.on('queue_position', pos => { document.getElementById('queue-pos').textContent = pos > 1 ? `You're #${pos} in queue` : 'Almost there…'; });
+  socket.on('chat_start', ({ sharedInterests }) => {
+    playSound('snd-match'); showConnectedFlash();
     setTimeout(() => {
-      showScreen('chat');
-      clearMessages();
-      addSystemMsg('You\'re connected 👋 Say hi!');
-      setStatus('online');
-      unlockInput();
+      showScreen('chat'); clearMessages(); messagesData.clear();
+      let welcomeMsg = "You're connected 👋 Say hi!";
+      if (sharedInterests?.length > 0) welcomeMsg = `You both like <b>${sharedInterests.join(', ')}</b>! 👋`;
+      addSystemMsg(welcomeMsg); setStatus('online'); unlockInput();
     }, 700);
   });
-  socket.on('message', ({ text, timestamp }) => {
-    hideTyping(); setStatus('online');
-    addMsg('stranger', text, timestamp);
-  });
+  socket.on('message', ({ text, timestamp, id, replyTo }) => { hideTyping(); setStatus('online'); addMsg('stranger', text, timestamp, id, replyTo); });
+  socket.on('voice_message', ({ audio, id, replyTo }) => { hideTyping(); setStatus('online'); addVoiceMsg('stranger', audio, id, replyTo); });
+  socket.on('message_edit', ({ id, text }) => { const data = messagesData.get(id); if (data) { data.text = text; data.edited = true; const el = document.getElementById(id); if (el) el.querySelector('.bubble').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; } });
+  socket.on('message_reaction', ({ msgId, emoji }) => { applyReaction(msgId, emoji, 'stranger'); });
   socket.on('typing_start', () => { showTyping(); setStatus('typing…'); });
-  socket.on('typing_stop',  () => { hideTyping(); setStatus('online'); });
-  socket.on('stranger_disconnected', () => {
-    hideTyping();
-    addSystemMsg('Stranger left the chat');
-    setStatus('offline'); lockInput();
-    showToast('Tap ⏭️ to find someone new');
-  });
-  socket.on('stranger_skipped', () => {
-    addSystemMsg('Stranger skipped you');
-    setStatus('offline'); lockInput();
-    showToast('You were skipped');
-  });
+  socket.on('typing_stop', () => { hideTyping(); setStatus('online'); });
+  socket.on('stranger_disconnected', () => { hideTyping(); addSystemMsg('Stranger left'); setStatus('offline'); lockInput(); showToast('Stranger left'); });
+  socket.on('stranger_skipped', () => { addSystemMsg('Stranger skipped you'); setStatus('offline'); lockInput(); showToast('You were skipped'); });
 }
 
-// ── NAV ───────────────────────────────────────────────────
-function showScreen(name) {
-  ['landing','finding','chat'].forEach(s =>
-    document.getElementById('screen-' + s).classList.toggle('hidden', s !== name)
-  );
-  closeEmoji();
-  if (name === 'chat') {
-    setTimeout(() => { updateLayout(); scrollToBottom(); }, 50);
+async function toggleVoiceRecord() {
+  if (isRecording) return;
+  cleanupMedia();
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    document.getElementById('recording-ui').classList.add('visible');
+    document.getElementById('rec-timer').textContent = '0:20';
+    initRecWaves();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser(); source = audioContext.createMediaStreamSource(stream); source.connect(analyser);
+    analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount);
+    mediaRecorder = new MediaRecorder(stream); audioChunks = []; recTimeLeft = 20;
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.start(); isRecording = true;
+    recCountdownInterval = setInterval(() => { recTimeLeft--; document.getElementById('rec-timer').textContent = `0:${recTimeLeft < 10 ? '0' : ''}${recTimeLeft}`; if (recTimeLeft <= 0) sendVoiceRecord(); }, 1000);
+    visualize();
+  } catch (err) { console.error(err); showToast('Mic access denied'); cleanupMedia(); }
+}
+function initRecWaves() { const container = document.getElementById('rec-waves'); container.innerHTML = Array(20).fill('<div class="rec-wave-bar"></div>').join(''); }
+function visualize() { if (!isRecording) return; analyser.getByteFrequencyData(dataArray); const bars = document.querySelectorAll('.rec-wave-bar'); for (let i = 0; i < bars.length; i++) { const val = dataArray[i % dataArray.length]; bars[i].style.height = Math.max(4, (val/255)*28) + 'px'; } animationFrameId = requestAnimationFrame(visualize); }
+function cleanupMedia() {
+  if (mediaRecorder?.state !== 'inactive') try { mediaRecorder.stop(); } catch(e){}
+  if (mediaRecorder?.stream) mediaRecorder.stream.getTracks().forEach(t => t.stop());
+  if (audioContext) try { audioContext.close(); } catch(e){}
+  clearInterval(recCountdownInterval); cancelAnimationFrame(animationFrameId);
+  isRecording = false; document.getElementById('recording-ui').classList.remove('visible');
+  audioContext = null; mediaRecorder = null; source = null;
+}
+function cancelVoiceRecord() { cleanupMedia(); showToast('Cancelled'); }
+function sendVoiceRecord() {
+  if (!isRecording || !mediaRecorder) return;
+  mediaRecorder.onstop = () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    const reader = new FileReader(); reader.readAsArrayBuffer(audioBlob);
+    reader.onloadend = () => {
+      const buffer = reader.result, msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
+      addVoiceMsg('you', buffer, msgId, replyingToId);
+      socket.emit('voice_message', { audio: buffer, id: msgId, replyTo: replyingToId });
+      cancelReply();
+    };
+  };
+  cleanupMedia();
+}
+
+function addVoiceMsg(who, audioData, id, replyToId = null) {
+  const msgId = id || 'msg-' + Math.random().toString(36).substr(2, 9);
+  const blob = new Blob([audioData], { type: 'audio/webm' }), url = URL.createObjectURL(blob);
+  messagesData.set(msgId, { who, type: 'voice', url, reactions: new Map() });
+  const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), div = document.createElement('div');
+  div.className = 'msg ' + who; div.id = msgId;
+  let replyHtml = '';
+  if (replyToId) {
+    const p = messagesData.get(replyToId);
+    if (p) replyHtml = `<div class="bubble-reply-context" onclick="scrollToMsg('${replyToId}')"><div style="font-size:10px; font-weight:700; opacity:0.6">${p.who === 'you' ? 'You' : 'Stranger'}</div><div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(p.type === 'voice' ? 'Voice Message' : p.text)}</div></div>`;
   }
+  div.innerHTML = `${replyHtml}<div class="bubble voice-bubble" onmousedown="handleMsgTouchStart('${msgId}')" onmouseup="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}')" ontouchend="handleMsgTouchEnd()"><button class="play-btn" onclick="playVoice('${url}', this)"><svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg></button><div class="waveform-visual">${Array(12).fill('<div class="wave-bar" style="height:10px"></div>').join('')}</div></div><div class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div><div class="reaction-container"></div>`;
+  msgs.insertBefore(div, typing); scrollToBottom(); if (who === 'stranger') playSound('snd-msg-in');
+}
+function playVoice(url, btn) {
+  const audio = new Audio(url), bars = btn.parentElement.querySelectorAll('.wave-bar'); audio.play();
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" fill="white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+  const interval = setInterval(() => { bars.forEach(b => b.style.height = (Math.random() * 15 + 5) + 'px'); }, 100);
+  audio.onended = () => { clearInterval(interval); bars.forEach(b => b.style.height = '10px'); btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg>'; };
 }
 
-function startChat() {
-  if (!socket) initSocket();
-  socket.emit('find_stranger');
-  showScreen('finding');
-  document.getElementById('queue-pos').textContent = '';
-}
+function showScreen(name) { ['landing','finding','chat'].forEach(s => document.getElementById('screen-' + s).classList.toggle('hidden', s !== name)); if (name === 'chat') setTimeout(() => { updateLayout(); scrollToBottom(); }, 50); }
+function startChat() { initSocket(); socket.emit('find_stranger', userSettings); showScreen('finding'); }
 function cancelSearch() { socket.emit('cancel_search'); showScreen('landing'); }
-function skipStranger() {
-  clearMessages();
-  socket.emit('skip_stranger');
-  showScreen('finding');
-  document.getElementById('queue-pos').textContent = '';
-  unlockInput();
-}
+function skipStranger() { clearMessages(); socket.emit('skip_stranger'); showScreen('finding'); unlockInput(); }
 function endChat() { socket.emit('end_chat'); showScreen('landing'); }
+function scrollToBottom() { const msgs = document.getElementById('messages'); msgs.scrollTop = msgs.scrollHeight; }
 
-// ── SCROLL ────────────────────────────────────────────────
-function scrollToBottom() {
-  const msgs = document.getElementById('messages');
-  msgs.scrollTop = msgs.scrollHeight;
+function addMsg(who, text, timestamp, id = null, replyToId = null) {
+  const msgId = id || 'msg-' + Math.random().toString(36).substr(2, 9);
+  messagesData.set(msgId, { who, text, timestamp, type: 'text', reactions: new Map(), edited: false });
+  const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), ts = timestamp || new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), div = document.createElement('div');
+  div.className = 'msg ' + who; div.id = msgId;
+  let replyHtml = '';
+  if (replyToId) {
+    const p = messagesData.get(replyToId);
+    if (p) replyHtml = `<div class="bubble-reply-context" onclick="scrollToMsg('${replyToId}')"><div style="font-size:10px; font-weight:700; opacity:0.6">${p.who === 'you' ? 'You' : 'Stranger'}</div><div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(p.type === 'voice' ? 'Voice Message' : p.text)}</div></div>`;
+  }
+  div.innerHTML = `${replyHtml}<div class="bubble" onmousedown="handleMsgTouchStart('${msgId}')" onmouseup="handleMsgTouchEnd()" onmouseleave="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}')" ontouchend="handleMsgTouchEnd()">${escapeHtml(text)}</div><div class="msg-time">${ts}</div><div class="reaction-container"></div>`;
+  msgs.insertBefore(div, typing); scrollToBottom(); if (who === 'stranger') playSound('snd-msg-in');
 }
 
-// ── MESSAGES ──────────────────────────────────────────────
-function addMsg(who, text, timestamp) {
-  const msgs   = document.getElementById('messages');
-  const typing = document.getElementById('typing-bubble');
-  const ts = timestamp || new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  const div = document.createElement('div');
-  div.className = 'msg ' + who;
-  div.innerHTML = `<div class="bubble">${escapeHtml(text)}</div><div class="msg-time">${ts}</div>`;
-  msgs.insertBefore(div, typing);
-  scrollToBottom();
-}
-function addSystemMsg(text) {
-  const msgs   = document.getElementById('messages');
-  const typing = document.getElementById('typing-bubble');
-  const div = document.createElement('div');
-  div.className = 'msg system';
-  div.innerHTML = `<div class="bubble">${text}</div>`;
-  msgs.insertBefore(div, typing);
-  scrollToBottom();
-}
-function clearMessages() {
-  const msgs   = document.getElementById('messages');
-  const typing = document.getElementById('typing-bubble');
-  msgs.innerHTML = '';
-  msgs.appendChild(typing);
-}
+function handleMsgTouchStart(id) { selectedMessageId = id; longPressTimer = setTimeout(() => { openActionMenu(); }, 600); }
+function handleMsgTouchEnd() { clearTimeout(longPressTimer); }
+function openActionMenu() { const data = messagesData.get(selectedMessageId); document.getElementById('edit-action-btn').style.display = (data.who === 'you' && data.type !== 'voice') ? 'flex' : 'none'; document.getElementById('action-menu-overlay').classList.add('open'); }
+function closeActionMenu() { document.getElementById('action-menu-overlay').classList.remove('open'); }
+function copyMessage() { const data = messagesData.get(selectedMessageId); if (data.type === 'voice') showToast('Cannot copy audio'); else { navigator.clipboard.writeText(data.text); showToast('Copied'); } closeActionMenu(); }
+function replyToMessage() { const data = messagesData.get(selectedMessageId); replyingToId = selectedMessageId; editingMessageId = null; const content = data.type === 'voice' ? 'Voice Message' : data.text; document.getElementById('reply-content').innerHTML = `Replying to: <b>${escapeHtml(content.slice(0, 40))}...</b>`; document.getElementById('reply-preview').classList.add('visible'); document.getElementById('msg-input').focus(); closeActionMenu(); }
+function cancelReply() { replyingToId = null; editingMessageId = null; document.getElementById('reply-preview').classList.remove('visible'); document.getElementById('msg-input').value = ''; autoResize(document.getElementById('msg-input')); }
+function editMessage() { const data = messagesData.get(selectedMessageId); if (data.who !== 'you' || data.type === 'voice') return; editingMessageId = selectedMessageId; replyingToId = null; document.getElementById('reply-content').innerHTML = `Editing: <b>${escapeHtml(data.text.slice(0, 40))}...</b>`; document.getElementById('reply-preview').classList.add('visible'); document.getElementById('msg-input').value = data.text; autoResize(document.getElementById('msg-input')); document.getElementById('msg-input').focus(); closeActionMenu(); }
+function reactToMessage(emoji) { if (!selectedMessageId || !socket) return; applyReaction(selectedMessageId, emoji, 'you'); socket.emit('message_reaction', { msgId: selectedMessageId, emoji }); closeActionMenu(); }
+function applyReaction(msgId, emoji, who) { const data = messagesData.get(msgId); if (!data) return; if (!data.reactions) data.reactions = new Map(); if (!data.reactions.has(emoji)) data.reactions.set(emoji, new Set()); const set = data.reactions.get(emoji); if (set.has(who)) { set.delete(who); if (set.size === 0) data.reactions.delete(emoji); } else { set.add(who); } renderReactions(msgId); }
+function renderReactions(msgId) { const data = messagesData.get(msgId), msgEl = document.getElementById(msgId); if (!msgEl) return; let container = msgEl.querySelector('.reaction-container'); if (!container) return; if (!data.reactions || data.reactions.size === 0) { container.innerHTML = ''; return; } container.innerHTML = Array.from(data.reactions.entries()).map(([emoji, users]) => `<div class="reaction-pill ${users.has('you') ? 'own' : ''}">${emoji}${users.size > 1 ? ' <span>' + users.size + '</span>' : ''}</div>`).join(''); }
+function scrollToMsg(id) { const el = document.getElementById(id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); const bubble = el.querySelector('.bubble'); bubble.style.animation = 'highlight 1s ease'; setTimeout(() => bubble.style.animation = '', 1000); } }
+function addSystemMsg(text) { const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), div = document.createElement('div'); div.className = 'msg system'; div.innerHTML = `<div class="bubble">${text}</div>`; msgs.insertBefore(div, typing); scrollToBottom(); }
+function clearMessages() { const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'); msgs.innerHTML = ''; msgs.appendChild(typing); }
 
 function sendMessage() {
-  const inp  = document.getElementById('msg-input');
-  const text = inp.value.trim();
-  if (!text || !socket) return;
-  const ts = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  addMsg('you', text, ts);
-  socket.emit('message', { text });
-  inp.value = '';
-  autoResize(inp);
-  stopTypingEmit();
-  closeEmoji();
-  inp.focus(); // keep keyboard open
+  const inp = document.getElementById('msg-input'), text = inp.value.trim(); if (!text || !socket) return;
+  if (editingMessageId) {
+    socket.emit('message_edit', { id: editingMessageId, text }); const data = messagesData.get(editingMessageId);
+    if (data) { data.text = text; data.edited = true; const el = document.getElementById(editingMessageId); if (el) el.querySelector('.bubble').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; }
+    cancelReply(); return;
+  }
+  const ts = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
+  const payload = { text, id: msgId }; if (replyingToId) payload.replyTo = replyingToId;
+  addMsg('you', text, ts, msgId, replyingToId); socket.emit('message', payload);
+  inp.value = ''; autoResize(inp); stopTypingEmit(); cancelReply(); inp.focus();
 }
 
-// ── TYPING ────────────────────────────────────────────────
-function showTyping() {
-  document.getElementById('typing-bubble').classList.add('visible');
-  scrollToBottom();
-}
+function showTyping() { document.getElementById('typing-bubble').classList.add('visible'); scrollToBottom(); }
 function hideTyping() { document.getElementById('typing-bubble').classList.remove('visible'); }
-function stopTypingEmit() {
-  if (isTyping) { socket?.emit('typing_stop'); isTyping = false; }
-  clearTimeout(typingTimer);
-}
-
-// ── INPUT ─────────────────────────────────────────────────
+function stopTypingEmit() { if (isTyping) { socket?.emit('typing_stop'); isTyping = false; } clearTimeout(typingTimer); }
 const msgInput = document.getElementById('msg-input');
-
-msgInput.addEventListener('input', () => {
-  autoResize(msgInput);
-  if (!isTyping) { isTyping = true; socket?.emit('typing_start'); }
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(() => { isTyping = false; socket?.emit('typing_stop'); }, 1500);
-});
-
-msgInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-});
-
-// When keyboard opens, layout updates via visualViewport listener above
-msgInput.addEventListener('focus', () => setTimeout(updateLayout, 300));
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
-}
-function lockInput() {
-  msgInput.disabled = true;
-  document.getElementById('send-btn').disabled = true;
-}
-function unlockInput() {
-  msgInput.disabled = false;
-  document.getElementById('send-btn').disabled = false;
-  setTimeout(() => msgInput.focus(), 100);
-}
+msgInput?.addEventListener('input', () => { autoResize(msgInput); if (!isTyping) { isTyping = true; socket?.emit('typing_start'); } clearTimeout(typingTimer); typingTimer = setTimeout(() => { isTyping = false; socket?.emit('typing_stop'); }, 1500); });
+msgInput?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+msgInput?.addEventListener('focus', () => setTimeout(updateLayout, 300));
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+function lockInput() { msgInput.disabled = true; document.getElementById('send-btn').disabled = true; }
+function unlockInput() { msgInput.disabled = false; document.getElementById('send-btn').disabled = false; setTimeout(() => msgInput.focus(), 100); }
 function setStatus(text) { document.getElementById('stranger-status').textContent = text; }
-
-// ── EMOJI ─────────────────────────────────────────────────
-function toggleEmoji() {
-  emojiOpen = !emojiOpen;
-  document.getElementById('emoji-picker').classList.toggle('open', emojiOpen);
-  if (emojiOpen) renderEmojis(currentCat);
-}
-function closeEmoji() {
-  emojiOpen = false;
-  document.getElementById('emoji-picker').classList.remove('open');
-}
-function showCat(cat) {
-  currentCat = cat;
-  document.querySelectorAll('.ecat').forEach((b, i) => {
-    b.classList.toggle('active', Object.keys(EMOJIS)[i] === cat);
-  });
-  renderEmojis(cat);
-}
-function renderEmojis(cat) {
-  document.getElementById('emoji-grid').innerHTML =
-    EMOJIS[cat].map(e => `<button class="eg-btn" onclick="insertEmoji('${e}')">${e}</button>`).join('');
-}
-function insertEmoji(emoji) {
-  const inp = document.getElementById('msg-input');
-  const pos = inp.selectionStart;
-  inp.value = inp.value.slice(0, pos) + emoji + inp.value.slice(inp.selectionEnd);
-  inp.selectionStart = inp.selectionEnd = pos + emoji.length;
-  inp.focus(); autoResize(inp);
-  if (!isTyping) { isTyping = true; socket?.emit('typing_start'); }
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(() => { isTyping = false; socket?.emit('typing_stop'); }, 1500);
-}
-
-document.addEventListener('click', e => {
-  if (emojiOpen && !e.target.closest('#emoji-picker') && !e.target.closest('#emoji-toggle-btn'))
-    closeEmoji();
-});
-
-// ── CONNECTED FLASH ───────────────────────────────────────
-function showConnectedFlash() {
-  const el = document.createElement('div');
-  el.className = 'conn-flash';
-  el.innerHTML = `<div class="conn-flash-inner"><div style="font-size:36px">👋</div><div style="font-size:17px;font-weight:700;margin-top:6px">Stranger found!</div><p>Say something nice</p></div>`;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-}
+function showConnectedFlash() { const el = document.createElement('div'); el.className = 'conn-flash'; el.innerHTML = `<div class="conn-flash-inner"><div style="font-size:36px">👋</div><div style="font-size:17px;font-weight:700;margin-top:6px">Stranger found!</div><p>Say something nice</p></div>`; document.body.appendChild(el); setTimeout(() => el.remove(), 900); }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 </script>
 </body>
 </html>
