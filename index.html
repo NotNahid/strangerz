@@ -1,16 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-    <meta property="og:title" content="Talk anonymously.!">
-    <meta property="og:description" content="Talk anonymously with someone new.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/NotNahid/strangerz/main/preview.webp">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://notnahid.github.io/strangerz/">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>strangerz</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='8.5' r='3'/%3E%3Cpath d='M6 18.5c0-3 2.5-5 6-5s6 2 6 5'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
@@ -24,6 +19,26 @@
       --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
       --topbar-h: 64px;
       --input-h: 68px;
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --topbar-h: 80px;
+        --input-h: 85px;
+      }
+      html, body {
+        font-size: 18px; /* ~125% of 15px */
+      }
+      .msg-time { font-size: 12px; }
+      .landing-content, .modal-card {
+        max-width: 500px;
+      }
+      .app-name { font-size: 48px; }
+      .topbar-btn { width: 44px; height: 44px; font-size: 18px; }
+      .stranger-avatar { width: 48px; height: 48px; font-size: 22px; }
+      .stranger-name { font-size: 18px; }
+      .bubble { padding: 14px 20px; border-radius: 28px; }
+      .btn-send-circle, .btn-mic { width: 54px; height: 54px; }
     }
 
     html, body {
@@ -97,11 +112,13 @@
     @keyframes livePulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
     .rules-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
     .rule-pill {
+      display: inline-flex; align-items: center; gap: 6px;
       padding: 8px 14px;
       background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--text-dim);
       border: 1px solid rgba(255,255,255,0.7);
     }
+    .rule-pill svg { flex-shrink: 0; }
     .btn-start {
       width: 100%; padding: 17px;
       background: #111; color: white; border: none; border-radius: 100px;
@@ -230,8 +247,18 @@
       border: 1px solid rgba(255,255,255,0.8);
       background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s; box-shadow: var(--shadow-sm); color: var(--text);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-sm); color: var(--text);
     }
+    .topbar-btn.confirming {
+      width: auto; padding: 0 12px; border-radius: 100px;
+      background: #ff3b30; color: white; border-color: #ff3b30;
+      font-size: 12px; font-weight: 700;
+    }
+    .topbar-btn#btn-skip.confirming svg { transform: rotate(180deg); }
+    .topbar-btn#btn-end.confirming svg { transform: rotate(90deg); }
+    .topbar-btn.confirming::after { margin-left: 6px; }
+    .topbar-btn#btn-skip.confirming::after { content: 'Skip?'; }
+    .topbar-btn#btn-end.confirming::after { content: 'End?'; }
 
     #messages {
       position: fixed; top: var(--topbar-h); left: 0; right: 0; bottom: var(--input-h);
@@ -247,7 +274,21 @@
     .msg.system { align-self: center; max-width: 90%; }
     .msg.you + .msg.you, .msg.stranger + .msg.stranger { margin-top: -3px; }
 
-    .bubble { padding: 11px 16px; border-radius: 22px; font-size: 15px; line-height: 1.45; word-break: break-word; position: relative; }
+    .bubble { padding: 10px 16px; border-radius: 22px; font-size: 15px; line-height: 1.45; word-break: break-word; position: relative; display: flex; flex-direction: column; gap: 2px; transition: background 0.2s; }
+    .msg-content-wrapper { display: flex; align-items: center; gap: 4px; width: 100%; position: relative; }
+    .msg.you .msg-content-wrapper { flex-direction: row-reverse; }
+    
+    .msg-dots-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.4); color: var(--text-dim);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; transition: all 0.2s; font-size: 14px;
+      flex-shrink: 0;
+    }
+    .msg:hover .msg-dots-btn { opacity: 1; }
+    /* Show dots on mobile/touch since there's no hover */
+    @media (hover: none) { .msg-dots-btn { opacity: 0.7; } }
+
     .msg.you .bubble {
       background: rgba(255,255,255,0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       color: var(--text); border-bottom-right-radius: 6px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.85);
@@ -256,8 +297,15 @@
       background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       color: var(--text); border-bottom-left-radius: 6px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.95);
     }
-    .msg.system .bubble { background: rgba(255,255,255,0.5); color: var(--text-dim); font-size: 12px; text-align: center; border-radius: 100px; padding: 6px 14px; font-weight: 500; }
-    .msg-time { font-size: 10px; color: rgba(0,0,0,0.35); margin-top: 3px; padding: 0 6px; }
+    .msg.system .bubble { background: rgba(255,255,255,0.5); color: var(--text-dim); font-size: 12px; text-align: center; border-radius: 100px; padding: 6px 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .reconnect-banner { background: rgba(255,255,255,0.8) !important; color: var(--text) !important; border: 1px solid rgba(255,255,255,0.9); box-shadow: var(--shadow-sm); padding: 10px 18px !important; margin: 10px 0; }
+    .btn-cancel-reconnect { background: #eee; border-radius: 100px; padding: 4px 10px; text-decoration: none; color: var(--text); font-size: 11px; font-weight: 700; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.05); }
+    .btn-cancel-reconnect:hover { background: #ddd; }
+    
+    .msg-text { white-space: pre-wrap; word-break: break-word; }
+    .msg-time { font-size: 10px; color: rgba(0,0,0,0.35); margin-top: 2px; }
+    .msg.you .msg-time { align-self: flex-end; text-align: right; }
+    .msg.stranger .msg-time { align-self: flex-start; text-align: left; }
 
     .typing-bubble { align-self: flex-start; background: rgba(255,255,255,0.88); border-radius: 22px; border-bottom-left-radius: 6px; padding: 13px 18px; box-shadow: var(--shadow); display: none; gap: 5px; align-items: center; }
     .typing-bubble.visible { display: flex; }
@@ -275,13 +323,15 @@
     .btn-mic.recording { background: #ff3b30; animation: micPulse 1.5s infinite; }
     @keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
 
-    .action-menu-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.15); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; }
+    .action-menu-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.05); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .action-menu-overlay.open { opacity: 1; pointer-events: auto; }
-    .action-menu { width: 240px; background: rgba(255,255,255,0.9); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.8); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    .action-menu { position: absolute; width: 180px; background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); transform: scale(0.85); transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
     .action-menu-overlay.open .action-menu { transform: scale(1); }
-    .reaction-bar { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-    .react-btn { font-size: 22px; cursor: pointer; background: none; border: none; }
-    .action-item { width: 100%; padding: 14px 20px; border: none; background: transparent; text-align: left; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 12px; }
+    .reaction-bar { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .react-btn { font-size: 18px; cursor: pointer; background: none; border: none; transition: transform 0.1s; }
+    .react-btn:active { transform: scale(1.3); }
+    .action-item { width: 100%; padding: 12px 16px; border: none; background: transparent; text-align: left; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .action-item:hover { background: rgba(0,0,0,0.03); }
 
     .voice-bubble { display: flex; align-items: center; gap: 10px; min-width: 160px; }
     .play-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--text); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -310,6 +360,23 @@
     .conn-flash { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; animation: flashOut 0.8s ease forwards; pointer-events: none; }
     @keyframes flashOut { 0%,60% { opacity: 1; } 100% { opacity: 0; } }
     .conn-flash-inner { background: rgba(255,255,255,0.7); border-radius: 24px; padding: 28px 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+
+    /* ══ HISTORY ══ */
+    #screen-history { padding: 20px; overflow-y: auto; background: rgba(253,240,232,0.7); backdrop-filter: blur(20px); }
+    .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-top: max(10px, env(safe-area-inset-top, 10px)); }
+    .history-header h2 { font-size: 24px; font-weight: 700; }
+    .history-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+    .history-item { 
+      background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); border-radius: 20px; 
+      padding: 16px; border: 1px solid rgba(255,255,255,0.8); cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
+    }
+    .history-item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.8); }
+    .history-item-info { display: flex; flex-direction: column; gap: 4px; }
+    .history-item-title { font-weight: 700; font-size: 16px; }
+    .history-item-meta { font-size: 12px; color: var(--text-dim); }
+    .btn-delete-history { color: #ff3b30; cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255, 59, 48, 0.1); }
+    .empty-history { text-align: center; color: var(--text-dim); margin-top: 40px; }
   </style>
 </head>
 <body>
@@ -324,14 +391,50 @@
     </div>
     <div class="online-chip"><div class="live-dot"></div><span id="online-count">—</span>&nbsp;online now</div>
     <div class="rules-pills">
-      <div class="rule-pill">🤝 Be kind</div>
-      <div class="rule-pill">🔒 No logs</div>
-      <div class="rule-pill">👤 Anonymous</div>
-      <div class="rule-pill">⏭️ Skip freely</div>
+      <div class="rule-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+        Be kind
+      </div>
+      <div class="rule-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        No logs
+      </div>
+      <div class="rule-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-9-13-9-13s1.29-1.46 4.12-1.46M17.94 17.94L21 21M17.94 17.94A10.07 10.07 0 0 0 20 12c0-7-13-9-13-9s-1.46 1.29-1.46 4.12M3 3l18 18"></path></svg>
+        Anonymous
+      </div>
+      <div class="rule-pill">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+        Skip freely
+      </div>
     </div>
     <button class="btn-secondary" onclick="openInterestsModal()">Manage Interests</button>
+    <button class="btn-secondary" onclick="showHistory()">Chat History</button>
     <button class="btn-start" onclick="startChat()">Find a Stranger</button>
   </div>
+</div>
+
+<div id="screen-history" class="screen hidden">
+  <div class="history-header">
+    <button class="topbar-btn" onclick="showScreen('landing')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+    <h2>History</h2>
+    <button class="topbar-btn" onclick="clearAllHistory()" title="Clear All"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+  </div>
+  <div id="history-list-container" class="history-list"></div>
+</div>
+
+<div id="screen-view-history" class="screen hidden">
+  <div class="chat-topbar">
+    <div class="topbar-left">
+      <button class="topbar-btn" onclick="showHistory()" style="margin-right:8px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+      <div class="stranger-avatar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+      <div class="stranger-info"><div class="stranger-name">Past Stranger</div><div class="stranger-status" id="history-date">—</div></div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" id="btn-delete-current" style="background:rgba(255, 59, 48, 0.1); color:#ff3b30"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+    </div>
+  </div>
+  <div id="history-messages" style="position:fixed; top:var(--topbar-h); left:0; right:0; bottom:0; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:6px;"></div>
 </div>
 
 <div id="modal-interests" class="modal-overlay" onclick="closeInterestsModal(event)">
@@ -349,15 +452,29 @@
 </div>
 
 <div id="screen-finding" class="screen hidden">
-  <div class="radar-container"><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-core">🔍</div></div>
+  <div class="radar-container"><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-core">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#111"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+  </div></div>
   <div class="finding-label"><h2>Finding someone…</h2><p>Searching the world for a stranger</p><div id="queue-pos"></div></div>
   <button class="btn-cancel-pill" onclick="cancelSearch()">Cancel</button>
 </div>
 
 <div id="screen-chat" class="screen hidden">
   <div class="chat-topbar">
-    <div class="topbar-left"><div class="stranger-avatar">🎭</div><div class="stranger-info"><div class="stranger-name">Stranger</div><div class="stranger-status" id="stranger-status">connected</div></div></div>
-    <div class="topbar-right"><button class="topbar-btn" onclick="skipStranger()" title="Skip">⏭️</button><button class="topbar-btn" onclick="endChat()" title="End">✕</button></div>
+    <div class="topbar-left">
+      <div class="stranger-avatar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+      <div class="stranger-info"><div class="stranger-name">Stranger</div><div class="stranger-status" id="stranger-status">connected</div></div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" id="btn-skip" onclick="skipStranger()" title="Skip">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+      </button>
+      <button class="topbar-btn" id="btn-end" onclick="endChat()" title="End">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
   </div>
   <div id="messages"><div class="typing-bubble" id="typing-bubble"><span></span><span></span><span></span></div></div>
   <div class="input-area" id="input-area">
@@ -378,9 +495,9 @@
     <div class="reaction-bar">
       <button class="react-btn" onclick="reactToMessage('❤️')">❤️</button><button class="react-btn" onclick="reactToMessage('😂')">😂</button><button class="react-btn" onclick="reactToMessage('😮')">😮</button><button class="react-btn" onclick="reactToMessage('😢')">😢</button><button class="react-btn" onclick="reactToMessage('🔥')">🔥</button><button class="react-btn" onclick="reactToMessage('👍')">👍</button>
     </div>
-    <button class="action-item" onclick="replyToMessage()"><span>💬</span> Reply</button>
-    <button class="action-item" onclick="copyMessage()"><span>📋</span> Copy</button>
-    <button class="action-item" id="edit-action-btn" onclick="editMessage()"><span>✏️</span> Edit</button>
+    <button class="action-item" onclick="replyToMessage()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg></span> Reply</button>
+    <button class="action-item" onclick="copyMessage()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span> Copy</button>
+    <button class="action-item" id="edit-action-btn" onclick="editMessage()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></span> Edit</button>
   </div>
 </div>
 
@@ -391,11 +508,9 @@
 <script>
 const SERVER_URL = (function() {
   const host = window.location.hostname;
-  // If we are local or in Cloud Shell, connect to the current origin
   if (host === 'localhost' || host === '127.0.0.1' || host.includes('cloudshell.dev')) {
     return window.location.origin;
   }
-  // REPLACE THIS with your actual Railway URL after you deploy the backend
   return 'strangerz-backend-production-e648.up.railway.app';
 })();
 let socket = null, isTyping = false, typingTimer = null;
@@ -412,6 +527,16 @@ function playSound(id) { const el = document.getElementById(id); if (el) { el.cu
 let userSettings = { interests: [], maxWait: 30 };
 const saved = localStorage.getItem('strangerz_settings');
 if (saved) { try { userSettings = JSON.parse(saved); } catch(e) {} }
+
+// REFRESH WARNING
+window.addEventListener('beforeunload', (e) => {
+  const chatActive = !document.getElementById('screen-chat').classList.contains('hidden');
+  if (chatActive) {
+    e.preventDefault();
+    e.returnValue = 'If you refresh, your chat will be lost and you will be disconnected.';
+    return e.returnValue;
+  }
+});
 
 function openInterestsModal() { renderTags(); updateWaitUI(); document.getElementById('modal-interests').classList.add('open'); }
 function closeInterestsModal(e) { if (e && e.target !== document.getElementById('modal-interests')) return; document.getElementById('modal-interests').classList.remove('open'); localStorage.setItem('strangerz_settings', JSON.stringify(userSettings)); }
@@ -437,29 +562,158 @@ function updateLayout() {
 if (window.visualViewport) { window.visualViewport.addEventListener('resize', updateLayout); window.visualViewport.addEventListener('scroll', updateLayout); }
 window.addEventListener('resize', updateLayout);
 
+let currentSessionId = null;
 function initSocket() {
   if (socket) return;
   socket = io(SERVER_URL, { transports: ['websocket', 'polling'] });
   socket.on('online_count', n => { document.getElementById('online-count').textContent = n; });
   socket.on('queue_position', pos => { document.getElementById('queue-pos').textContent = pos > 1 ? `You're #${pos} in queue` : 'Almost there…'; });
-  socket.on('chat_start', ({ sharedInterests }) => {
+  socket.on('chat_start', ({ sessionId, sharedInterests }) => {
+    currentSessionId = sessionId;
+    saveToHistory({ id: sessionId, timestamp: Date.now(), messages: [], sharedInterests });
     playSound('snd-match'); showConnectedFlash();
     setTimeout(() => {
       showScreen('chat'); clearMessages(); messagesData.clear();
-      let welcomeMsg = "You're connected 👋 Say hi!";
-      if (sharedInterests?.length > 0) welcomeMsg = `You both like <b>${sharedInterests.join(', ')}</b>! 👋`;
+      const waveSvg = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin:0 2px"><path d="m18 11 2.5 2.5a2.12 2.12 0 0 1 0 3l-.5.5a2.12 2.12 0 0 1-3 0L14 14.5"></path><path d="m14 10 3 3a2.12 2.12 0 0 1 0 3v0a2.12 2.12 0 0 1-3 0l-3-3"></path><path d="m10 10.5 3.5 3.5a2.12 2.12 0 0 1 0 3v0a2.12 2.12 0 0 1-3 0L7 13.5"></path><path d="m7 15-3.5-3.5a2.12 2.12 0 0 1 0-3v0a2.12 2.12 0 0 1 3 0l3.5 3.5"></path></svg>`;
+      let welcomeMsg = `You're connected ${waveSvg} Say hi!`;
+      if (sharedInterests?.length > 0) welcomeMsg = `You both like <b>${sharedInterests.join(', ')}</b>! ${waveSvg}`;
       addSystemMsg(welcomeMsg); setStatus('online'); unlockInput();
     }, 700);
   });
-  socket.on('message', ({ text, timestamp, id, replyTo }) => { hideTyping(); setStatus('online'); addMsg('stranger', text, timestamp, id, replyTo); });
-  socket.on('voice_message', ({ audio, id, replyTo }) => { hideTyping(); setStatus('online'); addVoiceMsg('stranger', audio, id, replyTo); });
-  socket.on('message_edit', ({ id, text }) => { const data = messagesData.get(id); if (data) { data.text = text; data.edited = true; const el = document.getElementById(id); if (el) el.querySelector('.bubble').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; } });
+  socket.on('message', ({ text, timestamp, id, replyTo }) => { 
+    hideTyping(); setStatus('online'); addMsg('stranger', text, timestamp, id, replyTo); 
+    updateSessionHistory(currentSessionId, { who: 'stranger', text, timestamp, type: 'text', id, replyTo });
+  });
+  socket.on('voice_message', ({ audio, id, replyTo }) => { 
+    hideTyping(); setStatus('online'); addVoiceMsg('stranger', audio, id, replyTo); 
+    updateSessionHistory(currentSessionId, { who: 'stranger', audio, type: 'voice', id, replyTo, timestamp: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) });
+  });
+  socket.on('message_edit', ({ id, text }) => { 
+    const data = messagesData.get(id); 
+    if (data) { 
+      data.text = text; data.edited = true; 
+      const el = document.getElementById(id); 
+      if (el) el.querySelector('.msg-text').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; 
+      updateSessionHistory(currentSessionId, id, { text, edited: true });
+    } 
+  });
   socket.on('message_reaction', ({ msgId, emoji }) => { applyReaction(msgId, emoji, 'stranger'); });
   socket.on('typing_start', () => { showTyping(); setStatus('typing…'); });
   socket.on('typing_stop', () => { hideTyping(); setStatus('online'); });
-  socket.on('stranger_disconnected', () => { hideTyping(); addSystemMsg('Stranger left'); setStatus('offline'); lockInput(); showToast('Stranger left'); });
-  socket.on('stranger_skipped', () => { addSystemMsg('Stranger skipped you'); setStatus('offline'); lockInput(); showToast('You were skipped'); });
+  socket.on('stranger_disconnected', () => { hideTyping(); addSystemMsg('Stranger left'); setStatus('offline'); lockInput(); showToast('Stranger left'); startAutoReconnect(); });
+  socket.on('stranger_skipped', () => { addSystemMsg('Stranger skipped you'); setStatus('offline'); lockInput(); showToast('You were skipped'); startAutoReconnect(); });
 }
+
+// ── HISTORY LOGIC ──
+function getHistory() { try { return JSON.parse(localStorage.getItem('strangerz_history') || '[]'); } catch(e) { return []; } }
+function saveHistory(h) { localStorage.setItem('strangerz_history', JSON.stringify(h.slice(0, 50))); } // Limit to 50 chats
+function saveToHistory(session) { const h = getHistory(); h.unshift(session); saveHistory(h); }
+function updateSessionHistory(sessionId, msgOrId, updateData = null) {
+  if (!sessionId) return;
+  const h = getHistory();
+  const session = h.find(s => s.id === sessionId);
+  if (!session) return;
+  if (updateData) {
+    const msg = session.messages.find(m => m.id === msgOrId);
+    if (msg) { Object.assign(msg, updateData); saveHistory(h); }
+  } else {
+    session.messages.push(msgOrId); saveHistory(h);
+  }
+}
+
+function showHistory() {
+  showScreen('history');
+  const container = document.getElementById('history-list-container');
+  const history = getHistory();
+  if (history.length === 0) {
+    container.innerHTML = '<div class="empty-history">No past chats yet.</div>';
+    return;
+  }
+  container.innerHTML = history.map(s => {
+    const date = new Date(s.timestamp).toLocaleString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    const lastMsg = s.messages.length > 0 ? (s.messages[s.messages.length-1].text || 'Voice Message') : 'No messages';
+    return `
+      <div class="history-item" onclick="viewChatHistory('${s.id}')">
+        <div class="history-item-info">
+          <div class="history-item-title">Chat on ${date}</div>
+          <div class="history-item-meta">${s.messages.length} messages • ${lastMsg.slice(0, 30)}${lastMsg.length > 30 ? '...' : ''}</div>
+        </div>
+        <div class="btn-delete-history" onclick="deleteHistoryItem(event, '${s.id}')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function viewChatHistory(id) {
+  const session = getHistory().find(s => s.id === id);
+  if (!session) return;
+  showScreen('view-history');
+  document.getElementById('history-date').textContent = new Date(session.timestamp).toLocaleString();
+  const container = document.getElementById('history-messages');
+  container.innerHTML = '';
+  session.messages.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + m.who;
+    let reactionsHtml = '';
+    if (m.reactions?.length > 0) {
+      reactionsHtml = `<div class="reaction-container" style="display:flex; gap:4px; margin-top:-8px; margin-left:10px">${m.reactions.map(([e, u]) => `<div class="reaction-pill">${e}${u.length > 1 ? ' <span>' + u.length + '</span>' : ''}</div>`).join('')}</div>`;
+    }
+    if (m.type === 'voice') {
+      div.innerHTML = `<div class="bubble voice-bubble"><button class="play-btn" onclick="playVoice('${m.audio}', this)"><svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg></button><div class="waveform-visual">${Array(12).fill('<div class="wave-bar" style="height:10px"></div>').join('')}</div><div class="msg-time">${m.timestamp}</div></div>${reactionsHtml}`;
+    } else {
+      div.innerHTML = `<div class="bubble"><div class="msg-text">${escapeHtml(m.text)}${m.edited ? ' <span class="msg-edited-tag">(edited)</span>' : ''}</div><div class="msg-time">${m.timestamp}</div></div>${reactionsHtml}`;
+    }
+    container.appendChild(div);
+  });
+  document.getElementById('btn-delete-current').onclick = () => { if(confirm('Delete this chat?')) { deleteHistoryItem(null, id); showHistory(); } };
+}
+
+function deleteHistoryItem(e, id) {
+  if (e) e.stopPropagation();
+  const h = getHistory().filter(s => s.id !== id);
+  saveHistory(h);
+  if (!e) return;
+  showHistory();
+}
+
+function clearAllHistory() {
+  if (confirm('Are you sure you want to clear all chat history?')) {
+    saveHistory([]);
+    showHistory();
+  }
+}
+
+function applyReaction(msgId, emoji, who) { 
+  const data = messagesData.get(msgId); 
+  if (!data) return; 
+  if (!data.reactions) data.reactions = new Map(); 
+  if (!data.reactions.has(emoji)) data.reactions.set(emoji, new Set()); 
+  const set = data.reactions.get(emoji); 
+  if (set.has(who)) { set.delete(who); if (set.size === 0) data.reactions.delete(emoji); } else { set.add(who); } 
+  renderReactions(msgId);
+  const serializedReactions = Array.from(data.reactions.entries()).map(([e, s]) => [e, Array.from(s)]);
+  updateSessionHistory(currentSessionId, msgId, { reactions: serializedReactions });
+}
+
+let autoReconnectTimer = null, autoReconnectTimeLeft = 10;
+function startAutoReconnect() {
+  stopAutoReconnect();
+  autoReconnectTimeLeft = 10;
+  const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), div = document.createElement('div');
+  div.className = 'msg system'; div.id = 'auto-reconnect-msg';
+  div.innerHTML = `<div class="bubble reconnect-banner"><span>Next stranger in <b id="reconnect-timer">${autoReconnectTimeLeft}</b>s</span><a href="#" class="btn-cancel-reconnect" onclick="cancelReconnectAction(event)">Cancel</a></div>`;
+  msgs.insertBefore(div, typing); scrollToBottom();
+  autoReconnectTimer = setInterval(() => {
+    autoReconnectTimeLeft--;
+    const el = document.getElementById('reconnect-timer');
+    if (el) el.textContent = autoReconnectTimeLeft;
+    if (autoReconnectTimeLeft <= 0) { stopAutoReconnect(); startChat(); }
+  }, 1000);
+}
+function cancelReconnectAction(e) { if (e) e.preventDefault(); stopAutoReconnect(); const el = document.getElementById('auto-reconnect-msg'); if (el) { el.querySelector('.bubble').innerHTML = 'Auto-reconnect cancelled'; el.querySelector('.bubble').classList.remove('reconnect-banner'); } }
+function stopAutoReconnect() { clearInterval(autoReconnectTimer); autoReconnectTimer = null; }
 
 async function toggleVoiceRecord() {
   if (isRecording) return;
@@ -497,8 +751,10 @@ function sendVoiceRecord() {
     const reader = new FileReader(); reader.readAsArrayBuffer(audioBlob);
     reader.onloadend = () => {
       const buffer = reader.result, msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
+      const ts = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       addVoiceMsg('you', buffer, msgId, replyingToId);
       socket.emit('voice_message', { audio: buffer, id: msgId, replyTo: replyingToId });
+      updateSessionHistory(currentSessionId, { who: 'you', audio: buffer, type: 'voice', id: msgId, replyTo: replyingToId, timestamp: ts });
       cancelReply();
     };
   };
@@ -508,7 +764,8 @@ function sendVoiceRecord() {
 function addVoiceMsg(who, audioData, id, replyToId = null) {
   const msgId = id || 'msg-' + Math.random().toString(36).substr(2, 9);
   const blob = new Blob([audioData], { type: 'audio/webm' }), url = URL.createObjectURL(blob);
-  messagesData.set(msgId, { who, type: 'voice', url, reactions: new Map() });
+  const timestamp = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  messagesData.set(msgId, { who, type: 'voice', url, timestamp, reactions: new Map() });
   const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), div = document.createElement('div');
   div.className = 'msg ' + who; div.id = msgId;
   let replyHtml = '';
@@ -516,7 +773,7 @@ function addVoiceMsg(who, audioData, id, replyToId = null) {
     const p = messagesData.get(replyToId);
     if (p) replyHtml = `<div class="bubble-reply-context" onclick="scrollToMsg('${replyToId}')"><div style="font-size:10px; font-weight:700; opacity:0.6">${p.who === 'you' ? 'You' : 'Stranger'}</div><div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(p.type === 'voice' ? 'Voice Message' : p.text)}</div></div>`;
   }
-  div.innerHTML = `${replyHtml}<div class="bubble voice-bubble" onmousedown="handleMsgTouchStart('${msgId}')" onmouseup="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}')" ontouchend="handleMsgTouchEnd()"><button class="play-btn" onclick="playVoice('${url}', this)"><svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg></button><div class="waveform-visual">${Array(12).fill('<div class="wave-bar" style="height:10px"></div>').join('')}</div></div><div class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div><div class="reaction-container"></div>`;
+  div.innerHTML = `${replyHtml}<div class="msg-content-wrapper"><div class="bubble voice-bubble" onmousedown="handleMsgTouchStart('${msgId}', this)" onmouseup="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}', this)" ontouchend="handleMsgTouchEnd()"><div style="display:flex; align-items:center; gap:10px"><button class="play-btn" onclick="playVoice('${url}', this)"><svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg></button><div class="waveform-visual">${Array(12).fill('<div class="wave-bar" style="height:10px"></div>').join('')}</div></div><div class="msg-time">${timestamp}</div></div><button class="msg-dots-btn" onclick="openActionMenuViaBtn('${msgId}', this)"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg></button></div><div class="reaction-container"></div>`;
   msgs.insertBefore(div, typing); scrollToBottom(); if (who === 'stranger') playSound('snd-msg-in');
 }
 function playVoice(url, btn) {
@@ -526,30 +783,51 @@ function playVoice(url, btn) {
   audio.onended = () => { clearInterval(interval); bars.forEach(b => b.style.height = '10px'); btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" fill="white"><path d="M8 5v14l11-7z"/></svg>'; };
 }
 
-function showScreen(name) { ['landing','finding','chat'].forEach(s => document.getElementById('screen-' + s).classList.toggle('hidden', s !== name)); if (name === 'chat') setTimeout(() => { updateLayout(); scrollToBottom(); }, 50); }
-function startChat() { initSocket(); socket.emit('find_stranger', userSettings); showScreen('finding'); }
+function showScreen(name) { 
+  ['landing','finding','chat','history','view-history'].forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if (el) el.classList.toggle('hidden', s !== name);
+  });
+  document.getElementById('btn-skip')?.classList.remove('confirming'); 
+  document.getElementById('btn-end')?.classList.remove('confirming'); 
+  if (name === 'chat') setTimeout(() => { updateLayout(); scrollToBottom(); }, 50); 
+}
+function startChat() { stopAutoReconnect(); initSocket(); socket.emit('find_stranger', userSettings); showScreen('finding'); }
 function cancelSearch() { socket.emit('cancel_search'); showScreen('landing'); }
-function skipStranger() { clearMessages(); socket.emit('skip_stranger'); showScreen('finding'); unlockInput(); }
-function endChat() { socket.emit('end_chat'); showScreen('landing'); }
+let skipTimer = null, endTimer = null;
+function skipStranger() { const btn = document.getElementById('btn-skip'); if (!btn.classList.contains('confirming')) { btn.classList.add('confirming'); clearTimeout(skipTimer); skipTimer = setTimeout(() => btn.classList.remove('confirming'), 3000); return; } btn.classList.remove('confirming'); stopAutoReconnect(); clearMessages(); socket.emit('skip_stranger'); showScreen('finding'); unlockInput(); }
+function endChat() { const btn = document.getElementById('btn-end'); if (!btn.classList.contains('confirming')) { btn.classList.add('confirming'); clearTimeout(endTimer); endTimer = setTimeout(() => btn.classList.remove('confirming'), 3000); return; } btn.classList.remove('confirming'); stopAutoReconnect(); socket.emit('end_chat'); showScreen('landing'); }
 function scrollToBottom() { const msgs = document.getElementById('messages'); msgs.scrollTop = msgs.scrollHeight; }
 
 function addMsg(who, text, timestamp, id = null, replyToId = null) {
   const msgId = id || 'msg-' + Math.random().toString(36).substr(2, 9);
-  messagesData.set(msgId, { who, text, timestamp, type: 'text', reactions: new Map(), edited: false });
-  const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), ts = timestamp || new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), div = document.createElement('div');
+  const ts = timestamp || new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  messagesData.set(msgId, { who, text, timestamp: ts, type: 'text', reactions: new Map(), edited: false });
+  const msgs = document.getElementById('messages'), typing = document.getElementById('typing-bubble'), div = document.createElement('div');
   div.className = 'msg ' + who; div.id = msgId;
   let replyHtml = '';
-  if (replyToId) {
-    const p = messagesData.get(replyToId);
-    if (p) replyHtml = `<div class="bubble-reply-context" onclick="scrollToMsg('${replyToId}')"><div style="font-size:10px; font-weight:700; opacity:0.6">${p.who === 'you' ? 'You' : 'Stranger'}</div><div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(p.type === 'voice' ? 'Voice Message' : p.text)}</div></div>`;
-  }
-  div.innerHTML = `${replyHtml}<div class="bubble" onmousedown="handleMsgTouchStart('${msgId}')" onmouseup="handleMsgTouchEnd()" onmouseleave="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}')" ontouchend="handleMsgTouchEnd()">${escapeHtml(text)}</div><div class="msg-time">${ts}</div><div class="reaction-container"></div>`;
+  if (replyToId) { const p = messagesData.get(replyToId); if (p) replyHtml = `<div class="bubble-reply-context" onclick="scrollToMsg('${replyToId}')"><div style="font-size:10px; font-weight:700; opacity:0.6">${p.who === 'you' ? 'You' : 'Stranger'}</div><div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(p.type === 'voice' ? 'Voice Message' : p.text)}</div></div>`; }
+  div.innerHTML = `${replyHtml}<div class="msg-content-wrapper"><div class="bubble" onmousedown="handleMsgTouchStart('${msgId}', this)" onmouseup="handleMsgTouchEnd()" onmouseleave="handleMsgTouchEnd()" ontouchstart="handleMsgTouchStart('${msgId}', this)" ontouchend="handleMsgTouchEnd()"><div class="msg-text">${escapeHtml(text)}</div><div class="msg-time">${ts}</div></div><button class="msg-dots-btn" onclick="openActionMenuViaBtn('${msgId}', this)"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg></button></div><div class="reaction-container"></div>`;
   msgs.insertBefore(div, typing); scrollToBottom(); if (who === 'stranger') playSound('snd-msg-in');
 }
 
-function handleMsgTouchStart(id) { selectedMessageId = id; longPressTimer = setTimeout(() => { openActionMenu(); }, 600); }
+function handleMsgTouchStart(id, el) { selectedMessageId = id; longPressTimer = setTimeout(() => { openActionMenu(el); }, 600); }
 function handleMsgTouchEnd() { clearTimeout(longPressTimer); }
-function openActionMenu() { const data = messagesData.get(selectedMessageId); document.getElementById('edit-action-btn').style.display = (data.who === 'you' && data.type !== 'voice') ? 'flex' : 'none'; document.getElementById('action-menu-overlay').classList.add('open'); }
+function openActionMenuViaBtn(id, el) { selectedMessageId = id; openActionMenu(el); }
+function openActionMenu(triggerEl = null) {
+  const data = messagesData.get(selectedMessageId);
+  const menu = document.querySelector('.action-menu'), overlay = document.getElementById('action-menu-overlay');
+  document.getElementById('edit-action-btn').style.display = (data.who === 'you' && data.type !== 'voice') ? 'flex' : 'none';
+  if (triggerEl) {
+    const rect = triggerEl.getBoundingClientRect();
+    const menuWidth = 180, menuHeight = 220;
+    let top = rect.top + window.scrollY, left = data.who === 'you' ? rect.left - menuWidth + 20 : rect.right - 20;
+    if (left < 10) left = 10; if (left + menuWidth > window.innerWidth - 10) left = window.innerWidth - menuWidth - 10;
+    if (top + menuHeight > window.innerHeight - 20) top = window.innerHeight - menuHeight - 20; if (top < 70) top = 70;
+    menu.style.top = top + 'px'; menu.style.left = left + 'px'; menu.style.transform = 'scale(1)';
+  } else { menu.style.top = '50%'; menu.style.left = '50%'; menu.style.transform = 'translate(-50%, -50%) scale(1)'; }
+  overlay.classList.add('open');
+}
 function closeActionMenu() { document.getElementById('action-menu-overlay').classList.remove('open'); }
 function copyMessage() { const data = messagesData.get(selectedMessageId); if (data.type === 'voice') showToast('Cannot copy audio'); else { navigator.clipboard.writeText(data.text); showToast('Copied'); } closeActionMenu(); }
 function replyToMessage() { const data = messagesData.get(selectedMessageId); replyingToId = selectedMessageId; editingMessageId = null; const content = data.type === 'voice' ? 'Voice Message' : data.text; document.getElementById('reply-content').innerHTML = `Replying to: <b>${escapeHtml(content.slice(0, 40))}...</b>`; document.getElementById('reply-preview').classList.add('visible'); document.getElementById('msg-input').focus(); closeActionMenu(); }
@@ -566,12 +844,18 @@ function sendMessage() {
   const inp = document.getElementById('msg-input'), text = inp.value.trim(); if (!text || !socket) return;
   if (editingMessageId) {
     socket.emit('message_edit', { id: editingMessageId, text }); const data = messagesData.get(editingMessageId);
-    if (data) { data.text = text; data.edited = true; const el = document.getElementById(editingMessageId); if (el) el.querySelector('.bubble').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; }
+    if (data) { 
+      data.text = text; data.edited = true; 
+      const el = document.getElementById(editingMessageId); 
+      if (el) el.querySelector('.msg-text').innerHTML = escapeHtml(text) + ' <span class="msg-edited-tag">(edited)</span>'; 
+      updateSessionHistory(currentSessionId, editingMessageId, { text, edited: true });
+    }
     cancelReply(); return;
   }
   const ts = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), msgId = 'msg-' + Math.random().toString(36).substr(2, 9);
   const payload = { text, id: msgId }; if (replyingToId) payload.replyTo = replyingToId;
   addMsg('you', text, ts, msgId, replyingToId); socket.emit('message', payload);
+  updateSessionHistory(currentSessionId, { who: 'you', text, timestamp: ts, type: 'text', id: msgId, replyTo: replyingToId });
   inp.value = ''; autoResize(inp); stopTypingEmit(); cancelReply(); inp.focus();
 }
 
@@ -589,6 +873,8 @@ function setStatus(text) { document.getElementById('stranger-status').textConten
 function showConnectedFlash() { const el = document.createElement('div'); el.className = 'conn-flash'; el.innerHTML = `<div class="conn-flash-inner"><div style="font-size:36px">👋</div><div style="font-size:17px;font-weight:700;margin-top:6px">Stranger found!</div><p>Say something nice</p></div>`; document.body.appendChild(el); setTimeout(() => el.remove(), 900); }
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+
+initSocket();
 </script>
 </body>
 </html>
