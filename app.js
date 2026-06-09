@@ -3,7 +3,7 @@ const SERVER_URL = (function() {
   if (host === 'localhost' || host === '127.0.0.1' || host.includes('cloudshell.dev')) {
     return window.location.origin;
   }
-  return 'https://strangerz-backend-production.up.railway.app';
+  return 'strangerz-backend-production-e648.up.railway.app';
 })();
 
 let socket = null, isTyping = false, typingTimer = null;
