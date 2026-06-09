@@ -3,7 +3,7 @@ const SERVER_URL = (function() {
   if (host === 'localhost' || host === '127.0.0.1' || host.includes('cloudshell.dev')) {
     return window.location.origin;
   }
-  return 'strangerz-backend-production-e648.up.railway.app';
+  return 'https://strangerz-backend-production.up.railway.app';
 })();
 
 let socket = null, isTyping = false, typingTimer = null;
@@ -51,11 +51,15 @@ function updateLayout() {
   const vv = window.visualViewport;
   const inputArea = document.getElementById('input-area'), messages = document.getElementById('messages'), topbar = document.querySelector('.chat-topbar');
   if (vv) {
-    const offsetFromBottom = Math.max(0, window.innerHeight - (vv.offsetTop + vv.height));
-    inputArea.style.transform = `translate3d(0, ${-offsetFromBottom}px, 0)`;
+    // Use the difference between layout height and visual viewport height for keyboard
+    const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
+    
+    // Apply adjustment only to the input area and message container bottom
+    inputArea.style.transform = `translate3d(0, ${-keyboardHeight}px, 0)`;
+    
     const inputH = inputArea.offsetHeight, topbarH = topbar.offsetHeight;
     messages.style.top = topbarH + 'px';
-    messages.style.bottom = (offsetFromBottom + inputH) + 'px';
+    messages.style.bottom = (keyboardHeight + inputH) + 'px';
   }
   scrollToBottom();
 }
